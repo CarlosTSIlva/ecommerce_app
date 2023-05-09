@@ -24,7 +24,7 @@ class EmailPasswordSignInState with EmailAndPasswordValidators {
   });
 
   final EmailPasswordSignInFormType formType;
-  final AsyncValue value;
+  final AsyncValue<void> value;
 
   bool get isLoading => value.isLoading;
 
