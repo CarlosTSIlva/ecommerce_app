@@ -119,4 +119,4 @@ firebase-exports
 .env.prod
 
 coverage/lcov.info
-*.png
+**/falures/*.png

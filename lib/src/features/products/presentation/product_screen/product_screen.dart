@@ -27,9 +27,9 @@ class ProductScreen extends StatelessWidget {
       appBar: const HomeAppBar(),
       body: Consumer(
         builder: (context, ref, _) {
-          final productsValue = ref.watch(productProvider(productId));
+          final productValue = ref.watch(productProvider(productId));
           return AsyncValueWidget<Product?>(
-            value: productsValue,
+            value: productValue,
             data: (product) => product == null
                 ? EmptyPlaceholderWidget(
                     message: 'Product not found'.hardcoded,

@@ -15,12 +15,12 @@ import 'package:go_router/go_router.dart';
 /// - [ShoppingCartIcon]
 /// - Orders button
 /// - Account or Sign-in button
-class HomeAppBar extends ConsumerWidget with PreferredSizeWidget {
+class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authStateChanglesProvider).value;
+    final user = ref.watch(authStateChangesProvider).value;
     // * This widget is responsive.
     // * On large screen sizes, it shows all the actions in the app bar.
     // * On small screen sizes, it shows only the shopping cart icon and a
