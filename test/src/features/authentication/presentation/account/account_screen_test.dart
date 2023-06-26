@@ -75,6 +75,6 @@ void main() {
       r.expectLogoutDialogFound();
       await r.tapDialogLogoutButton();
     });
-    r.expectCirucularProgressIndicator();
+    r.expectCircularProgressIndicator();
   });
 }
