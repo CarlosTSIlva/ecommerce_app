@@ -5,41 +5,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EmailPasswordSignInController
     extends StateNotifier<EmailPasswordSignInState> {
   EmailPasswordSignInController({
-    required this.authRepository,
     required EmailPasswordSignInFormType formType,
+    required this.authRepository,
   }) : super(EmailPasswordSignInState(formType: formType));
-
   final FakeAuthRepository authRepository;
 
   Future<bool> submit(String email, String password) async {
-    state = state.copyWith(value: const AsyncValue<void>.loading());
-
+    state = state.copyWith(value: const AsyncValue.loading());
     final value = await AsyncValue.guard(() => _authenticate(email, password));
-
     state = state.copyWith(value: value);
     return value.hasError == false;
   }
 
-  Future<void> _authenticate(String email, String password) async {
+  Future<void> _authenticate(String email, String password) {
     switch (state.formType) {
       case EmailPasswordSignInFormType.signIn:
-        return authRepository.signinwithEmailAndPassord(email, password);
+        return authRepository.signInWithEmailAndPassword(email, password);
       case EmailPasswordSignInFormType.register:
-        return authRepository.createuserWithEmailAndPassword(email, password);
+        return authRepository.createUserWithEmailAndPassword(email, password);
     }
   }
 
-  void updateTypeForm(EmailPasswordSignInFormType formType) {
-    state = state.copyWith(
-      formType: formType,
-    );
+  void updateFormType(EmailPasswordSignInFormType formType) {
+    state = state.copyWith(formType: formType);
   }
 }
 
 final emailPasswordSignInControllerProvider = StateNotifierProvider.autoDispose
     .family<EmailPasswordSignInController, EmailPasswordSignInState,
-        EmailPasswordSignInFormType>((ref, type) {
+        EmailPasswordSignInFormType>((ref, formType) {
   final authRepository = ref.watch(authRepositoryProvider);
   return EmailPasswordSignInController(
-      authRepository: authRepository, formType: type);
+    authRepository: authRepository,
+    formType: formType,
+  );
 });

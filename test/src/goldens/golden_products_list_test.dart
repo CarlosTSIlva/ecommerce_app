@@ -11,9 +11,8 @@ void main() {
     const Size(600, 800),
     const Size(1000, 1000),
   });
-
   testWidgets(
-    "Golden - products list",
+    'Golden - products list',
     (tester) async {
       final r = Robot(tester);
       final currentSize = sizeVariant.currentValue!;
@@ -25,12 +24,14 @@ void main() {
       await expectLater(
         find.byType(MyApp),
         matchesGoldenFile(
-          'products_list_${currentSize.width.toInt()}X${currentSize.height.toInt()}.png',
+          'products_list_${currentSize.width.toInt()}x${currentSize.height.toInt()}.png',
         ),
       );
     },
     variant: sizeVariant,
-    tags: ["golden"],
+    tags: ['golden'],
+    // Skip this test until we can run it successfully on CI without this error:
+    // Golden "products_list_300x600.png": Pixel test failed, 2.33% diff detected.
     skip: true,
   );
 }

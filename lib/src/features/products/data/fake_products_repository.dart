@@ -1,14 +1,10 @@
-import 'dart:async';
-
+import 'package:ecommerce_app/src/constants/test_products.dart';
 import 'package:ecommerce_app/src/features/products/domain/product.dart';
 import 'package:ecommerce_app/src/utils/delay.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../constants/test_products.dart';
-
 class FakeProductsRepository {
   FakeProductsRepository({this.addDelay = true});
-
   final bool addDelay;
   final List<Product> _products = kTestProducts;
 
@@ -16,7 +12,7 @@ class FakeProductsRepository {
     return _products;
   }
 
-  Product? getProductById(String id) {
+  Product? getProduct(String id) {
     return _getProduct(_products, id);
   }
 
@@ -30,7 +26,7 @@ class FakeProductsRepository {
     yield _products;
   }
 
-  Stream<Product?> whatchProduct(String id) {
+  Stream<Product?> watchProduct(String id) {
     return watchProductsList().map((products) => _getProduct(products, id));
   }
 
@@ -53,7 +49,8 @@ final productsListStreamProvider =
   return productsRepository.watchProductsList();
 });
 
-final productsListFutureProvider = FutureProvider<List<Product>>((ref) {
+final productsListFutureProvider =
+    FutureProvider.autoDispose<List<Product>>((ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.fetchProductsList();
 });
@@ -61,6 +58,5 @@ final productsListFutureProvider = FutureProvider<List<Product>>((ref) {
 final productProvider =
     StreamProvider.autoDispose.family<Product?, String>((ref, id) {
   final productsRepository = ref.watch(productsRepositoryProvider);
-
-  return productsRepository.whatchProduct(id);
+  return productsRepository.watchProduct(id);
 });

@@ -32,8 +32,7 @@ class ProductCard extends StatelessWidget {
               gapH8,
               const Divider(),
               gapH8,
-              Text(product.title,
-                  style: Theme.of(context).textTheme.titleLarge),
+              Text(product.title, style: Theme.of(context).textTheme.titleLarge),
               if (product.numRatings >= 1) ...[
                 gapH8,
                 ProductAverageRating(product: product),

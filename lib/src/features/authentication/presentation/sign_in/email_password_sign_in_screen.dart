@@ -104,20 +104,21 @@ class _EmailPasswordSignInContentsState
   }
 
   void _updateFormType(EmailPasswordSignInFormType formType) {
+    // * Toggle between register and sign in form
     ref
         .read(emailPasswordSignInControllerProvider(widget.formType).notifier)
-        .updateTypeForm(formType);
+        .updateFormType(formType);
+    // * Clear the password field when doing so
     _passwordController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(
-        emailPasswordSignInControllerProvider(widget.formType)
-            .select((state) => state.value), (_, state) {
-      state.showAlertDialogOnError(context);
-    });
-
+    ref.listen<AsyncValue>(
+      emailPasswordSignInControllerProvider(widget.formType)
+          .select((state) => state.value),
+      (_, state) => state.showAlertDialogOnError(context),
+    );
     final state =
         ref.watch(emailPasswordSignInControllerProvider(widget.formType));
     return ResponsiveScrollableCard(

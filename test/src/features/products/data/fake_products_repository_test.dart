@@ -3,65 +3,60 @@ import 'package:ecommerce_app/src/features/products/data/fake_products_repositor
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  FakeProductsRepository makeProductsRepository() =>
-      FakeProductsRepository(addDelay: false);
+  FakeProductsRepository makeProductsRepository() => FakeProductsRepository(
+        addDelay: false,
+      );
   group('FakeProductsRepository', () {
-    test("getProductsList resturns global list", () {
-      final productRepository = makeProductsRepository();
-      expect(productRepository.getProductsList(), kTestProducts);
-    });
-
-    test("getProduct(1) returns frist item", () {
-      final productRepository = makeProductsRepository();
-
+    test('getProductsList returns global list', () {
+      final productsRepository = makeProductsRepository();
       expect(
-        productRepository.getProductById("1"),
-        kTestProducts.first,
+        productsRepository.getProductsList(),
+        kTestProducts,
       );
     });
 
-    test("getProduct(100) returns null", () {
-      final productRepository = makeProductsRepository();
-
+    test('getProduct(1) returns first item', () {
+      final productsRepository = makeProductsRepository();
       expect(
-        productRepository.getProductById("100"),
+        productsRepository.getProduct('1'),
+        kTestProducts[0],
+      );
+    });
+
+    test('getProduct(100) returns null', () {
+      final productsRepository = makeProductsRepository();
+      expect(
+        productsRepository.getProduct('100'),
         null,
       );
     });
   });
 
-  test("fetchProductList returns global list", () async {
-    final productRepository = makeProductsRepository();
-
+  test('fetchProductsList returns global list', () async {
+    final productsRepository = makeProductsRepository();
     expect(
-      await productRepository.fetchProductsList(),
+      await productsRepository.fetchProductsList(),
       kTestProducts,
     );
   });
-
-  test("watchProductList returns global list", () async {
-    final productRepository = makeProductsRepository();
-
+  test('watchProductsList emits global list', () {
+    final productsRepository = makeProductsRepository();
     expect(
-      productRepository.watchProductsList(),
+      productsRepository.watchProductsList(),
       emits(kTestProducts),
     );
   });
-
-  test('watchProduct(1) emit first item', () {
-    final productRepository = makeProductsRepository();
-
+  test('watchProduct(1) emits first item', () {
+    final productsRepository = makeProductsRepository();
     expect(
-      productRepository.whatchProduct('1'),
-      emits(kTestProducts.first),
+      productsRepository.watchProduct('1'),
+      emits(kTestProducts[0]),
     );
   });
-
   test('watchProduct(100) emits null', () {
-    final productRepository = makeProductsRepository();
-
+    final productsRepository = makeProductsRepository();
     expect(
-      productRepository.whatchProduct('100'),
+      productsRepository.watchProduct('100'),
       emits(null),
     );
   });
