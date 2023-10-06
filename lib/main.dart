@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore:depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
 
+import 'src/features/cart/application/cart_sync_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // turn off the # in the URLs on the web
@@ -16,12 +18,20 @@ void main() async {
   // * https://docs.flutter.dev/testing/errors
   registerErrorHandlers();
   final localCartRepository = await SembastCartRepository.makeDefault();
+
+  final container = ProviderContainer(
+    overrides: [
+      // * Override the default implementation of the local cart repository
+      // * with the one we created above
+      localCartRepositoryProvider.overrideWithValue(localCartRepository),
+    ],
+  );
+
+  container.read(cartSyncServiceProvider);
   // * Entry point of the app
   runApp(
-    ProviderScope(
-      overrides: [
-        localCartRepositoryProvider.overrideWithValue(localCartRepository)
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: const MyApp(),
     ),
   );

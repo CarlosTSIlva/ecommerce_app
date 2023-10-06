@@ -38,7 +38,7 @@ void main() {
 
     addTearDown(container.dispose);
 
-    return container.read(cartServiseProvider);
+    return container.read(cartServiceProvider);
   }
 
   group("setItem", () {

@@ -39,7 +39,7 @@ final addToCartControllerProviderProvider =
         (ref) {
   return AddToCartController(
     cartService: ref.watch(
-      cartServiseProvider,
+      cartServiceProvider,
     ),
   );
 });
