@@ -15,14 +15,13 @@ class ShoppingCartIcon extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartItemsCount = ref.watch(cartItemsCountProvider);
-
     return Stack(
       children: [
         Center(
           child: IconButton(
             key: shoppingCartIconKey,
             icon: const Icon(Icons.shopping_cart),
-            onPressed: () => context.pushNamed(AppRoute.cart.name),
+            onPressed: () => context.goNamed(AppRoute.cart.name),
           ),
         ),
         if (cartItemsCount > 0)
@@ -54,10 +53,9 @@ class ShoppingCartIconBadge extends StatelessWidget {
         child: Text(
           '$itemsCount',
           textAlign: TextAlign.center,
-          // * Force textScaleFactor to 1.0 irrespective of the device's
+          // * Force text scale factor to 1.0 irrespective of the device's
           // * textScaleFactor. This is to prevent the text from growing bigger
           // * than the available space.
-          textScaleFactor: 1.0,
           style: Theme.of(context)
               .textTheme
               .bodySmall!

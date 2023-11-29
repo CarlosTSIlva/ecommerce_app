@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/src/app.dart';
+import 'package:ecommerce_app/src/features/cart/application/cart_sync_service.dart';
 import 'package:ecommerce_app/src/features/cart/data/local/local_cart_repository.dart';
 import 'package:ecommerce_app/src/features/cart/data/local/sembast_cart_repository.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
@@ -8,8 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore:depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
 
-import 'src/features/cart/application/cart_sync_service.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // turn off the # in the URLs on the web
@@ -18,23 +17,19 @@ void main() async {
   // * https://docs.flutter.dev/testing/errors
   registerErrorHandlers();
   final localCartRepository = await SembastCartRepository.makeDefault();
-
+  // * Create ProviderContainer with any required overrides
   final container = ProviderContainer(
     overrides: [
-      // * Override the default implementation of the local cart repository
-      // * with the one we created above
       localCartRepositoryProvider.overrideWithValue(localCartRepository),
     ],
   );
-
+  // * Initialize CartSyncService to start the listener
   container.read(cartSyncServiceProvider);
   // * Entry point of the app
-  runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const MyApp(),
-    ),
-  );
+  runApp(UncontrolledProviderScope(
+    container: container,
+    child: const MyApp(),
+  ));
 }
 
 void registerErrorHandlers() {

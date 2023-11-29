@@ -19,13 +19,12 @@ class AddToCartWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AsyncValue<int>>(addToCartControllerProviderProvider, (_, next) {
-      next.showAlertDialogOnError(context);
-    });
+    ref.listen<AsyncValue<int>>(
+      addToCartControllerProvider,
+      (_, state) => state.showAlertDialogOnError(context),
+    );
     final availableQuantity = ref.watch(itemAvailableQuantityProvider(product));
-
-    final state = ref.watch(addToCartControllerProviderProvider);
-
+    final state = ref.watch(addToCartControllerProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -39,13 +38,11 @@ class AddToCartWidget extends ConsumerWidget {
               // let the user choose up to the available quantity or
               // 10 items at most
               maxQuantity: min(availableQuantity, 10),
-              onChanged: (value) {
-                state.isLoading
-                    ? null
-                    : ref
-                        .read(addToCartControllerProviderProvider.notifier)
-                        .updateQuantity(value);
-              },
+              onChanged: state.isLoading
+                  ? null
+                  : (quantity) => ref
+                      .read(addToCartControllerProvider.notifier)
+                      .updateQuantity(quantity),
             ),
           ],
         ),
@@ -54,9 +51,10 @@ class AddToCartWidget extends ConsumerWidget {
         gapH8,
         PrimaryButton(
           isLoading: state.isLoading,
+          // only enable the button if there is enough stock
           onPressed: availableQuantity > 0
               ? () => ref
-                  .read(addToCartControllerProviderProvider.notifier)
+                  .read(addToCartControllerProvider.notifier)
                   .addItem(product.id)
               : null,
           text: availableQuantity > 0

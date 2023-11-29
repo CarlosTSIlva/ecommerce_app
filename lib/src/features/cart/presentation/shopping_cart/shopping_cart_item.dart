@@ -85,8 +85,7 @@ class ShoppingCartItemContents extends ConsumerWidget {
         children: [
           Text(product.title, style: Theme.of(context).textTheme.headlineSmall),
           gapH24,
-          Text(priceFormatted,
-              style: Theme.of(context).textTheme.headlineSmall),
+          Text(priceFormatted, style: Theme.of(context).textTheme.headlineSmall),
           gapH24,
           isEditable
               // show the quantity selector and a delete button

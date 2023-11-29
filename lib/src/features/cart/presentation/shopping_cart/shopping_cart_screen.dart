@@ -23,7 +23,6 @@ class ShoppingCartScreen extends ConsumerWidget {
       shoppingCartScreenControllerProvider,
       (_, state) => state.showAlertDialogOnError(context),
     );
-
     final state = ref.watch(shoppingCartScreenControllerProvider);
     return Scaffold(
       appBar: AppBar(
@@ -31,9 +30,9 @@ class ShoppingCartScreen extends ConsumerWidget {
       ),
       body: Consumer(
         builder: (context, ref, child) {
-          final cartItemsList = ref.watch(cartProvider);
+          final cartValue = ref.watch(cartProvider);
           return AsyncValueWidget<Cart>(
-            value: cartItemsList,
+            value: cartValue,
             data: (cart) => ShoppingCartItemsBuilder(
               items: cart.toItemsList(),
               itemBuilder: (_, item, index) => ShoppingCartItem(

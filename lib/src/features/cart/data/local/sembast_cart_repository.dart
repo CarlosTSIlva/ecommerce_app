@@ -11,12 +11,12 @@ class SembastCartRepository implements LocalCartRepository {
   final Database db;
   final store = StoreRef.main();
 
-  static Future<Database> createDatabase(String fileName) async {
+  static Future<Database> createDatabase(String filename) async {
     if (!kIsWeb) {
       final appDocDir = await getApplicationDocumentsDirectory();
-      return databaseFactoryIo.openDatabase('${appDocDir.path}/$fileName');
+      return databaseFactoryIo.openDatabase('${appDocDir.path}/$filename');
     } else {
-      return databaseFactoryWeb.openDatabase(fileName);
+      return databaseFactoryWeb.openDatabase(filename);
     }
   }
 
@@ -24,11 +24,11 @@ class SembastCartRepository implements LocalCartRepository {
     return SembastCartRepository(await createDatabase('default.db'));
   }
 
-  static const cartItemKey = 'cartItem';
+  static const cartItemsKey = 'cartItems';
 
   @override
   Future<Cart> fetchCart() async {
-    final cartJson = await store.record(cartItemKey).get(db) as String?;
+    final cartJson = await store.record(cartItemsKey).get(db) as String?;
     if (cartJson != null) {
       return Cart.fromJson(cartJson);
     } else {
@@ -38,12 +38,12 @@ class SembastCartRepository implements LocalCartRepository {
 
   @override
   Future<void> setCart(Cart cart) {
-    return store.record(cartItemKey).put(db, cart.toJson());
+    return store.record(cartItemsKey).put(db, cart.toJson());
   }
 
   @override
   Stream<Cart> watchCart() {
-    final record = store.record(cartItemKey);
+    final record = store.record(cartItemsKey);
     return record.onSnapshot(db).map((snapshot) {
       if (snapshot != null) {
         return Cart.fromJson(snapshot.value as String);

@@ -14,70 +14,62 @@ import 'package:mocktail/mocktail.dart';
 import '../../../mocks.dart';
 
 void main() {
-  late MockAuthRepository mockAuthRepository;
-  late MockRemoteCartRepository mockRemoteCartRepository;
-  late MockLocalCartRepository mockLocalCartRepository;
-  late MockProductsRepository mockProductsRepository;
+  late MockAuthRepository authRepository;
+  late MockRemoteCartRepository remoteCartRepository;
+  late MockLocalCartRepository localCartRepository;
+  late MockProductsRepository productsRepository;
 
   setUp(() {
-    mockAuthRepository = MockAuthRepository();
-    mockRemoteCartRepository = MockRemoteCartRepository();
-    mockLocalCartRepository = MockLocalCartRepository();
-    mockProductsRepository = MockProductsRepository();
+    authRepository = MockAuthRepository();
+    remoteCartRepository = MockRemoteCartRepository();
+    localCartRepository = MockLocalCartRepository();
+    productsRepository = MockProductsRepository();
   });
 
   CartSyncService makeCartSyncService() {
-    final container = ProviderContainer(
-      overrides: [
-        authRepositoryProvider.overrideWithValue(mockAuthRepository),
-        remoteCartRepositoryProvider
-            .overrideWithValue(mockRemoteCartRepository),
-        localCartRepositoryProvider.overrideWithValue(mockLocalCartRepository),
-        productsRepositoryProvider.overrideWithValue(mockProductsRepository),
-      ],
-    );
+    final container = ProviderContainer(overrides: [
+      authRepositoryProvider.overrideWithValue(authRepository),
+      productsRepositoryProvider.overrideWithValue(productsRepository),
+      localCartRepositoryProvider.overrideWithValue(localCartRepository),
+      remoteCartRepositoryProvider.overrideWithValue(remoteCartRepository),
+    ]);
     addTearDown(container.dispose);
     return container.read(cartSyncServiceProvider);
   }
 
-  group('cartSyncService', () {
+  group('CartSyncService', () {
     Future<void> runCartSyncTest({
       required Map<ProductID, int> localCartItems,
       required Map<ProductID, int> remoteCartItems,
       required Map<ProductID, int> expectedRemoteCartItems,
     }) async {
-      const uuid = "123";
-      when(mockAuthRepository.authStateChanges).thenAnswer(
-        (invocation) => Stream.value(
-          const AppUser(uid: uuid, email: "carlos@c.com"),
-        ),
+      const uid = '123';
+      when(authRepository.authStateChanges).thenAnswer(
+        (_) => Stream.value(const AppUser(uid: uid, email: 'test@test.com')),
       );
-
-      when(mockProductsRepository.fetchProductsList)
-          .thenAnswer((invocation) => Future.value(kTestProducts));
-
-      when(mockLocalCartRepository.fetchCart)
-          .thenAnswer((invocation) => Future.value(Cart(localCartItems)));
-
-      when(() => mockRemoteCartRepository.fetchCart(uuid))
-          .thenAnswer((invocation) => Future.value(Cart(remoteCartItems)));
-
-      when(() => mockRemoteCartRepository.setCart(
-              uuid, Cart(expectedRemoteCartItems)))
-          .thenAnswer((invocation) => Future.value());
-
-      when(() => mockLocalCartRepository.setCart(const Cart()))
-          .thenAnswer((invocation) => Future.value());
+      when(productsRepository.fetchProductsList)
+          .thenAnswer((_) => Future.value(kTestProducts));
+      when(localCartRepository.fetchCart)
+          .thenAnswer((_) => Future.value(Cart(localCartItems)));
+      when(() => remoteCartRepository.fetchCart(uid))
+          .thenAnswer((_) => Future.value(Cart(remoteCartItems)));
+      when(() =>
+              remoteCartRepository.setCart(uid, Cart(expectedRemoteCartItems)))
+          .thenAnswer((_) => Future.value());
+      when(() => localCartRepository.setCart(const Cart()))
+          .thenAnswer((_) => Future.value());
+      // create cart sync service (return value not needed)
       makeCartSyncService();
+      // wait for all the stubbed methods to return a value
       await Future.delayed(const Duration());
-      verify(
-        () => mockRemoteCartRepository.setCart(
-          uuid,
-          Cart(expectedRemoteCartItems),
-        ),
-      ).called(1);
-
-      verify(() => mockLocalCartRepository.setCart(const Cart())).called(1);
+      // verify
+      verify(() => remoteCartRepository.setCart(
+            uid,
+            Cart(expectedRemoteCartItems),
+          )).called(1);
+      verify(() => localCartRepository.setCart(
+            const Cart(),
+          )).called(1);
     }
 
     test('local quantity <= available quantity', () async {
@@ -87,7 +79,6 @@ void main() {
         expectedRemoteCartItems: {'1': 1},
       );
     });
-
     test('local quantity > available quantity', () async {
       await runCartSyncTest(
         localCartItems: {'1': 15},
@@ -95,7 +86,6 @@ void main() {
         expectedRemoteCartItems: {'1': 5},
       );
     });
-
     test('local + remote quantity <= available quantity', () async {
       await runCartSyncTest(
         localCartItems: {'1': 1},
