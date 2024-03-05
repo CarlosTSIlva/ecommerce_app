@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:ecommerce_app/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
@@ -14,7 +12,6 @@ enum CheckoutSubRoute { register, payment }
 /// This is the root widget of the checkout flow, which is composed of 2 pages:
 /// 1. Register page
 /// 2. Payment page
-/// TODO: Show the correct page based on whether the user is signed in.
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
@@ -23,22 +20,17 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 }
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
-  late final _controller;
+  late final PageController _controller;
 
   var _subRoute = CheckoutSubRoute.register;
 
   @override
   void initState() {
     super.initState();
-
     final user = ref.read(authRepositoryProvider).currentUser;
-
     if (user != null) {
-      setState(() {
-        _subRoute = CheckoutSubRoute.payment;
-      });
+      setState(() => _subRoute = CheckoutSubRoute.payment);
     }
-
     _controller = PageController(initialPage: _subRoute.index);
   }
 
