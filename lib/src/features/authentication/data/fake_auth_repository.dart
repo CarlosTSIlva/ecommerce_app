@@ -1,9 +1,10 @@
+import 'package:ecommerce_app/src/exceptions/app_exception.dart';
 import 'package:ecommerce_app/src/features/authentication/domain/app_user.dart';
 import 'package:ecommerce_app/src/features/authentication/domain/fake_app_user.dart';
-import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
 import 'package:ecommerce_app/src/utils/delay.dart';
 import 'package:ecommerce_app/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:multiple_result/multiple_result.dart';
 
 class FakeAuthRepository {
   FakeAuthRepository({this.addDelay = true});
@@ -16,38 +17,41 @@ class FakeAuthRepository {
   // List to keep track of all user accounts
   final List<FakeAppUser> _users = [];
 
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
+  Future<Result<void, AppException>> signInWithEmailAndPassword(
+      String email, String password) async {
     await delay(addDelay);
     // check the given credentials agains each registered user
     for (final u in _users) {
       // matching email and password
       if (u.email == email && u.password == password) {
         _authState.value = u;
-        return;
+        return const Success(null);
       }
       // same email, wrong password
       if (u.email == email && u.password != password) {
-        throw Exception('Wrong password'.hardcoded);
+        return Error(WrongPasswordException());
       }
     }
-    throw Exception('User not found'.hardcoded);
+    return Error(UserNotFoundException());
   }
 
-  Future<void> createUserWithEmailAndPassword(
+  Future<Result<void, AppException>> createUserWithEmailAndPassword(
       String email, String password) async {
     await delay(addDelay);
     // check if the email is already in use
     for (final u in _users) {
       if (u.email == email) {
-        throw Exception('Email already in use'.hardcoded);
+        return Error(EmailAlreadyInUseException());
       }
     }
     // minimum password length requirement
     if (password.length < 8) {
-      throw Exception('Password is too weak'.hardcoded);
+      return Error(WeakPasswordException());
     }
     // create new user
     _createNewUser(email, password);
+
+    return const Success(null);
   }
 
   Future<void> signOut() async {
