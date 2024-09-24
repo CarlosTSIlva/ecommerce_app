@@ -22,7 +22,7 @@ class FakeProductsRepository {
   }
 
   Future<List<Product>> fetchProductsList() async {
-    await delay(addDelay);
+    // await delay(addDelay);
     return Future.value(_products.value);
   }
 
@@ -32,6 +32,19 @@ class FakeProductsRepository {
 
   Stream<Product?> watchProduct(String id) {
     return watchProductsList().map((products) => _getProduct(products, id));
+  }
+
+  Future<List<Product>> searchPoroducts(String query) async {
+    assert(
+        _products.value.length <= 100,
+        'client side search shouyld only be performed if the number of products is small.'
+        'Consider doing server side search for larger datasets.');
+    final productsList = await fetchProductsList();
+
+    return productsList
+        .where((product) =>
+            product.title.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   /// Update product or add a new one
@@ -79,4 +92,15 @@ final productProvider =
     StreamProvider.autoDispose.family<Product?, String>((ref, id) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.watchProduct(id);
+});
+
+final productsListSearchProvider = FutureProvider.autoDispose
+    .family<List<Product>, String>((ref, query) async {
+  final link = ref.keepAlive();
+  Timer(const Duration(seconds: 5), () {
+    link.close();
+  });
+
+  final productsRepository = ref.watch(productsRepositoryProvider);
+  return productsRepository.searchPoroducts(query);
 });
