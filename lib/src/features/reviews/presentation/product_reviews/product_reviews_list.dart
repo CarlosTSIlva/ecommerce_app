@@ -15,9 +15,9 @@ class ProductReviewsList extends ConsumerWidget {
   final ProductID productId;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final reviewValue = ref.watch(productReviewsProvider(productId));
+    final reviewsValue = ref.watch(productReviewsProvider(productId));
     return AsyncValueSliverWidget<List<Review>>(
-      value: reviewValue,
+      value: reviewsValue,
       data: (reviews) => SliverList(
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, int index) => ResponsiveCenter(

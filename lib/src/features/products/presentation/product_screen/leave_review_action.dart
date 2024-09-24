@@ -1,5 +1,4 @@
 import 'package:ecommerce_app/src/features/orders/application/user_orders_provider.dart';
-import 'package:ecommerce_app/src/features/orders/domain/order.dart';
 import 'package:ecommerce_app/src/features/products/domain/product.dart';
 import 'package:ecommerce_app/src/features/reviews/application/reviews_service.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
@@ -21,7 +20,6 @@ class LeaveReviewAction extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orders = ref.watch(matchingUserOrdersProvider(productId)).value;
-
     if (orders != null && orders.isNotEmpty) {
       final dateFormatted =
           ref.watch(dateFormatterProvider).format(orders.first.orderDate);

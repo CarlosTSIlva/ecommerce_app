@@ -63,7 +63,6 @@ class _LeaveReviewFormState extends ConsumerState<LeaveReviewForm> {
   void initState() {
     super.initState();
     final review = widget.review;
-
     if (review != null) {
       _controller.text = review.comment;
       _rating = review.rating;
@@ -72,17 +71,18 @@ class _LeaveReviewFormState extends ConsumerState<LeaveReviewForm> {
 
   @override
   void dispose() {
+    // * TextEditingControllers should be always disposed
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(leaveReviewControllerProvider, (previous, next) {
-      next.showAlertDialogOnError(context);
-    });
+    ref.listen<AsyncValue>(
+      leaveReviewControllerProvider,
+      (_, state) => state.showAlertDialogOnError(context),
+    );
     final state = ref.watch(leaveReviewControllerProvider);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -116,15 +116,14 @@ class _LeaveReviewFormState extends ConsumerState<LeaveReviewForm> {
           isLoading: state.isLoading,
           onPressed: state.isLoading || _rating == 0
               ? null
-              : () async {
+              : () =>
                   ref.read(leaveReviewControllerProvider.notifier).submitReview(
-                        previewReview: widget.review,
-                        productID: widget.productId,
+                        previousReview: widget.review,
+                        productId: widget.productId,
                         rating: _rating,
                         comment: _controller.text,
                         onSuccess: context.pop,
-                      );
-                },
+                      ),
         )
       ],
     );
