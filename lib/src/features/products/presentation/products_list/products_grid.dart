@@ -18,7 +18,7 @@ class ProductsGrid extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productsListValue = ref.watch(productSearchResultsProvider);
+    final productsListValue = ref.watch(productsSearchResultsProvider);
     return AsyncValueWidget<List<Product>>(
       value: productsListValue,
       data: (products) => products.isEmpty

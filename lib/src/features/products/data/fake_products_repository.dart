@@ -22,7 +22,6 @@ class FakeProductsRepository {
   }
 
   Future<List<Product>> fetchProductsList() async {
-    // await delay(addDelay);
     return Future.value(_products.value);
   }
 
@@ -32,19 +31,6 @@ class FakeProductsRepository {
 
   Stream<Product?> watchProduct(String id) {
     return watchProductsList().map((products) => _getProduct(products, id));
-  }
-
-  Future<List<Product>> searchPoroducts(String query) async {
-    assert(
-        _products.value.length <= 100,
-        'client side search shouyld only be performed if the number of products is small.'
-        'Consider doing server side search for larger datasets.');
-    final productsList = await fetchProductsList();
-
-    return productsList
-        .where((product) =>
-            product.title.toLowerCase().contains(query.toLowerCase()))
-        .toList();
   }
 
   /// Update product or add a new one
@@ -60,6 +46,22 @@ class FakeProductsRepository {
       products[index] = product;
     }
     _products.value = products;
+  }
+
+  /// Search for products where the title contains the search query
+  Future<List<Product>> searchProducts(String query) async {
+    assert(
+      _products.value.length <= 100,
+      'Client-side search should only be performed if the number of products is small. '
+      'Consider doing server-side search for larger datasets.',
+    );
+    // Get all products
+    final productsList = await fetchProductsList();
+    // Match all products where the title contains the query
+    return productsList
+        .where((product) =>
+            product.title.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   static Product? _getProduct(List<Product> products, String id) {
@@ -97,10 +99,11 @@ final productProvider =
 final productsListSearchProvider = FutureProvider.autoDispose
     .family<List<Product>, String>((ref, query) async {
   final link = ref.keepAlive();
-  Timer(const Duration(seconds: 5), () {
+  // * keep previous search results in memory for 60 seconds
+  final timer = Timer(const Duration(seconds: 60), () {
     link.close();
   });
-
+  ref.onDispose(() => timer.cancel());
   final productsRepository = ref.watch(productsRepositoryProvider);
-  return productsRepository.searchPoroducts(query);
+  return productsRepository.searchProducts(query);
 });

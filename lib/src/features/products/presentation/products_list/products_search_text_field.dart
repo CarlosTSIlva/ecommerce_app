@@ -44,15 +44,14 @@ class _ProductsSearchTextFieldState
                       _controller.clear();
                       ref
                           .read(productsSearchQueryStateProvider.notifier)
-                          .state = "";
+                          .state = '';
                     },
                     icon: const Icon(Icons.clear),
                   )
                 : null,
           ),
-          onChanged: (e) {
-            ref.read(productsSearchQueryStateProvider.notifier).state = e;
-          },
+          onChanged: (text) =>
+              ref.read(productsSearchQueryStateProvider.notifier).state = text,
         );
       },
     );
