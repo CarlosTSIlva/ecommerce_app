@@ -16,6 +16,7 @@ dependencies:
   intl: 0.18.1
   flutter_layout_grid: 2.0.5
   flutter_rating_bar: 4.0.1
+  riverpod_annotation: any
   go_router: 12.1.1
   flutter_riverpod: 2.4.6
   rxdart: 0.27.7
@@ -31,6 +32,8 @@ dev_dependencies:
     sdk: flutter    
   flutter_lints: 3.0.1
   mocktail: 1.0.1
+  build_runner: any
+  riverpod_generator: any
 
 
 # Custom app icon. For more info see: https://pub.dev/packages/flutter_launcher_icons

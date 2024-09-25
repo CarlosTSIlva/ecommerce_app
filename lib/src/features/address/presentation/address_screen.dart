@@ -47,7 +47,6 @@ class _AddressPageState extends State<AddressScreen> {
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
-      // TODO: uncomment and submit the address
       // final address = Address(
       //   address: _addressController.value.text,
       //   city: _cityController.value.text,
@@ -55,7 +54,6 @@ class _AddressPageState extends State<AddressScreen> {
       //   postalCode: _postalCodeController.value.text,
       //   country: _countryController.value.text,
       // );
-      // TODO: Only fire callback if submission is successful
       widget.onSubmit?.call();
     }
   }
