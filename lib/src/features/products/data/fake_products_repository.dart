@@ -77,6 +77,7 @@ class FakeProductsRepository {
 
 @riverpod
 FakeProductsRepository productsRepository(ProductsRepositoryRef ref) {
+  // * Set addDelay to false for faster loading
   return FakeProductsRepository(addDelay: false);
 }
 
@@ -87,8 +88,7 @@ Stream<List<Product>> productsListStream(ProductsListStreamRef ref) {
 }
 
 @riverpod
-FutureOr<List<Product>> productsListFutureProvider(
-    ProductsListFutureProviderRef ref) {
+Future<List<Product>> productsListFuture(ProductsListFutureRef ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.fetchProductsList();
 }
@@ -100,8 +100,8 @@ Stream<Product?> product(ProductRef ref, ProductID id) {
 }
 
 @riverpod
-FutureOr<List<Product>> productsListSearch(
-    ProductsListSearchRef ref, String query) {
+Future<List<Product>> productsListSearch(
+    ProductsListSearchRef ref, String query) async {
   final link = ref.keepAlive();
   // * keep previous search results in memory for 60 seconds
   final timer = Timer(const Duration(seconds: 60), () {

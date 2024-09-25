@@ -12,7 +12,6 @@ String _$currentDateBuilderHash() =>
 /// A provider that returns a function that returns the current date.
 /// This makes it easy to mock the current date in tests.
 ///
-///
 /// Copied from [currentDateBuilder].
 @ProviderFor(currentDateBuilder)
 final currentDateBuilderProvider =

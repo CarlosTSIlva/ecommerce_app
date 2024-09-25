@@ -9,8 +9,9 @@ part 'email_password_sign_in_controller.g.dart';
 @riverpod
 class EmailPasswordSignInController extends _$EmailPasswordSignInController {
   @override
-  FutureOr<void> build() {}
-
+  FutureOr<void> build() {
+    // nothing to do
+  }
   Future<bool> submit(
       {required String email,
       required String password,

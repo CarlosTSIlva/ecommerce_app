@@ -7,7 +7,7 @@ part of 'payment_button_controller.dart';
 // **************************************************************************
 
 String _$paymentButtonControllerHash() =>
-    r'141a0ed5c3900449a180e9f2d548890e58a725bc';
+    r'32af9b54f0a19136e29fc2e868b1bf9e903976e8';
 
 /// See also [PaymentButtonController].
 @ProviderFor(PaymentButtonController)
